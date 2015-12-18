@@ -1,6 +1,10 @@
-assets/*
-!assets/.gitignore
-protected/runtime/*
-!protected/runtime/.gitignore
-protected/data/*.db
-themes/classic/views/
+phpunit.xml
+composer.lock
+/.composer/
+composer.lock
+*.sublime-workspace
+/vendor/
+/docker-compose.yml
+.DS_Store
+/storage/
+*.log

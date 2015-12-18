@@ -1,0 +1,29 @@
+{
+	"name": "canis/yii2-token-storage",
+	"description": "Token storage for Yii2 applications",
+	"keywords": ["yii", "canis"],
+	"homepage": "http://canis.io",
+	"type": "yii2-extension",
+	"license": "BSD-3-Clause",
+	"minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Jacob Morrison",
+            "email": "jacob@canis.io"
+        }
+    ],
+	"require": {
+        "yiisoft/yii2": "2.*"
+	},
+	"require-dev": {
+	},
+    "autoload": {
+		"psr-4": { "canis\\tokenStorage\\": "lib" }
+    },
+    "extra": {
+    	"bootstrap": "canis\\tokenStorage\\Extension",
+        "branch-alias": {
+            "dev-master": "2.0.x-dev"
+        }
+    }
+}
