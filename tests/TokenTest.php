@@ -48,5 +48,6 @@ class TokenTest extends TestCase
     {
         $token = new PlaintextToken($secret);
         $this->assertEquals($secret, $this->invoke($token, 'getToken'));
+        $this->assertEquals($secret, (string)$token);
     }
 }

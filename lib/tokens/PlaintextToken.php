@@ -2,16 +2,34 @@
 namespace canis\tokenStorage\tokens;
 
 class PlaintextToken
+    extends BaseToken
 {
+    /**
+     * @var string Plaintext token
+     */
     private $token;
 
-    public function __construct($token)
+    /**
+     * @inheritdoc
+     */
+    public function initializedToken(string $token)
     {
         $this->token = $token;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getToken()
     {
         return $this->token;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isInitialized()
+    {
+        return $this->token !== null;
     }
 }
