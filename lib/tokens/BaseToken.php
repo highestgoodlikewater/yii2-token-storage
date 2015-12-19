@@ -24,7 +24,7 @@ abstract class BaseToken
      * @param  string                       $token      String that needs to be stored
      * @param  AdapterInstanceInterface     $adapter
      */
-    public function __construct(string $token, AdapterInstanceInterface $adapterInstance = null)
+    public function __construct($token, AdapterInstanceInterface $adapterInstance = null)
     {
         $this->adapterInstance = $adapterInstance;
         $this->initializedToken($token);

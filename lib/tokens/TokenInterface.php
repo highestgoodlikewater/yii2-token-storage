@@ -13,7 +13,7 @@ interface TokenInterface
      * Initialize an interface with a token
      * @param  string $token Token string
      */
-    public function initializedToken(string $token);
+    public function initializedToken($token);
 
     /**
      * Checks if the token has been initialized

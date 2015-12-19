@@ -12,7 +12,7 @@ class PlaintextToken
     /**
      * @inheritdoc
      */
-    public function initializedToken(string $token)
+    public function initializedToken($token)
     {
         $this->token = $token;
     }
