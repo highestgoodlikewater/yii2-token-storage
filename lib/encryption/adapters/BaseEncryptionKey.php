@@ -1,9 +1,9 @@
 <?php
 namespace canis\tokenStorage\encryption\adapters;
 
-use phpseclib\Crypt\RSA as Crypt_RSA;
 use yii\base\InvalidConfigException;
 use canis\tokenStorage\encryption\AdapterInterface;
+use canis\tokenStorage\encryption\KeyPair;
 
     /*
     http://phpseclib.sourceforge.net/rsa/examples.html
@@ -13,50 +13,39 @@ use canis\tokenStorage\encryption\AdapterInterface;
 abstract class BaseEncryptionKey
     extends BaseAdapter
 {
-    protected $publicKey = false;
-    protected $privateKey = false;
+    protected $keyPair = false;
 
-    abstract protected function loadKeys();
+    abstract protected function loadKeyPair();
 
-    protected function generateKeys()
+    static protected function generateKeyPair($keySize = 2048)
     {
-        $rsa = new Crypt_RSA();
-        $rsa->setPrivateKeyFormat(CRYPT_RSA_PRIVATE_FORMAT_PKCS1);
-        $rsa->setPublicKeyFormat(CRYPT_RSA_PUBLIC_FORMAT_PKCS1);
-        defined('CRYPT_RSA_EXPONENT') || define('CRYPT_RSA_EXPONENT', 65537);
-        defined('CRYPT_RSA_SMALLEST_PRIME') || define('CRYPT_RSA_SMALLEST_PRIME', 64);
-        return $rsa->createKey($this->config['keySize']);
-    }
-
-    protected function getPublicKey()
-    {
-        return $this->publicKey;
-    }
-
-    protected function getPrivateKey()
-    {
-        return $this->privateKey;
+        return new KeyPair($keySize);
     }
 
     private function getKeyPair()
     {
-        if (!$this->loadKeys()) {
+        if (!$this->loadKeyPair()) {
             return false;
         }
-        return [
-            'private' => $this->getPrivateKey(),
-            'public' => $this->getPublicKey()
-        ];
+        return $this->keyPair;
     }
 
     public function encrypt($token)
     {
-
+        $keyPair = $this->getKeyPair();
+        if (!$keyPair) {
+            return false;
+        }
+        return $keyPair->encrypt($token);
     }
 
     public function decrypt($encryptedToken)
     {
-
+        $keyPair = $this->getKeyPair();
+        if (!$keyPair) {
+            return false;
+        }
+        return $keyPair->decrypt($encryptedToken);
     }
 
     public function isAvailable()
@@ -66,13 +55,13 @@ abstract class BaseEncryptionKey
 
     static public function defaultConfig()
     {
-        return array_merge(static::defaultConfig(), [
-            'keySize' => 1024
+        return array_merge(parent::defaultConfig(), [
+            'keySize' => 2048
         ]);
     }
 
     static public function requiredConfig()
     {
-        return array_merge(static::requiredConfig(), ['keySize']);
+        return array_merge(parent::requiredConfig(), ['keySize']);
     }
 }

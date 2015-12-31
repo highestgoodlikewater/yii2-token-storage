@@ -1,9 +1,14 @@
 <?php
-namespace canisunit\tokenStorage;
+namespace canisunit\tokenStorage\tokens;
+
 use canis\tokenStorage\tokens\PlaintextToken;
+use canisunit\tokenStorage\TestCase;
+use canisunit\tokenStorage\TestTokensTrait;
 
 class TokenTest extends TestCase
 {
+    use TestTokensTrait;
+    
     protected function setUp()
     {
         parent::setUp();
@@ -18,24 +23,7 @@ class TokenTest extends TestCase
      */
     public function dataProviderCheckTokens()
     {
-        $tokens = [
-            ["pass\0word"],
-            [chr(0)],
-            ['привет, я multibyte...'],
-            ['Qנטשופ צרכנות'],
-            ["\x21?+"],
-            ["\x21\x3F"]
-        ];
-        $tokens[] = [sha1(uniqid(rand(), true))];
-        $tokens[] = [sha1(uniqid(rand(), true))];
-        $tokens[] = [sha1(uniqid(rand(), true))];
-        $tokens[] = [sha1(uniqid(rand(), true))];
-        $tokens[] = [sha1(uniqid(rand(), true))];
-        $tokens[] = [sha1(uniqid(rand(), true))];
-        $tokens[] = [sha1(uniqid(rand(), true))];
-        $tokens[] = [sha1(uniqid(rand(), true))];
-        $tokens[] = [sha1(uniqid(rand(), true))];
-        return $tokens;
+        return static::testTokens();
     }
 
     /**

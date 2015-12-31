@@ -26,7 +26,11 @@ abstract class BaseAdapter
 
     public function setConfig($config)
     {
-        $config = array_merge(static::defaultConfig(), $config);
+        $currentConfig = [];
+        if (isset($this->conifg)) {
+            $currentConfig = $this->config;
+        }
+        $config = array_merge(static::defaultConfig(), $currentConfig, $config);
         foreach (static::requiredConfig() as $key) {
             if (!isset($config[$key])) {
                 throw new InvalidConfigException(get_class($this) . " token encryption adapter requires '{$key}' config key");

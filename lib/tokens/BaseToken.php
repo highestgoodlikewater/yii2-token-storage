@@ -41,6 +41,6 @@ abstract class BaseToken
      */
     public function __toString()
     {
-        return $this->getToken();
+        return (string)$this->getToken();
     }
 }

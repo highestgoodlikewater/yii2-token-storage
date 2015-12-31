@@ -57,6 +57,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      */
     protected function destroyApplication()
     {
+        if (\Yii::$app && \Yii::$app->has('session', true)) {
+            \Yii::$app->session->close();
+        }
         Yii::$app = null;
         Yii::$container = new Container();
     }
@@ -76,5 +79,19 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $result = $methodReflection->invokeArgs($object, $args);
         $methodReflection->setAccessible(false);
         return $result;
+    }
+
+    /**
+     * Asserting two strings equality ignoring line endings
+     *
+     * @param string $expected
+     * @param string $actual
+     */
+    public function assertEqualsWithoutLE($expected, $actual)
+    {
+        $expected = str_replace("\r\n", "\n", $expected);
+        $actual = str_replace("\r\n", "\n", $actual);
+
+        $this->assertEquals($expected, $actual);
     }
 }
