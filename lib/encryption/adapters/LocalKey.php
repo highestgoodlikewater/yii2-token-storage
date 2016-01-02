@@ -3,6 +3,7 @@ namespace canis\tokenStorage\encryption\adapters;
 
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\helpers\FileHelper;
 use canis\tokenStorage\encryption\AdapterInterface;
 use canis\tokenStorage\encryption\KeyPairInterface;
 
@@ -15,7 +16,7 @@ class LocalKey
 {
     protected function loadKeyPair()
     {
-        if ($this->keyPair) {
+        if ($this->keyPair !== null) {
             return true;
         }
         $config = $this->getConfig();
@@ -24,12 +25,12 @@ class LocalKey
             throw new InvalidConfigException("The path alias ({$config['localStorage']}) for the local token encryption keys is invalid");
         }
         if (!is_dir($keyDirectory)) {
-            @mkdir($keyDirectory, $config['keyDirectoryPermissions'], true);
+            FileHelper::createDirectory($keyDirectory, $config['keyDirectoryPermissions'], true);
         }
         if (!is_dir($keyDirectory)) {
             throw new InvalidConfigException("The directory ({$keyDirectory}) for the local token encryption keys could not be protected");
         }
-        @chmod($keyDirectory, $config['keyDirectoryPermissions']);
+        chmod($keyDirectory, $config['keyDirectoryPermissions']);
         $keyPath = $keyDirectory . DIRECTORY_SEPARATOR . $config['keyName'] . '.key';
         if (!is_readable($keyPath)) {
             $keyPair = static::generateKeyPair($config['keySize']);

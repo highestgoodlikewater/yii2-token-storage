@@ -13,7 +13,10 @@ use canis\tokenStorage\encryption\KeyPair;
 abstract class BaseEncryptionKey
     extends BaseAdapter
 {
-    protected $keyPair = false;
+    /**
+     * @var object the key pair object
+     */
+    protected $keyPair;
 
     abstract protected function loadKeyPair();
 

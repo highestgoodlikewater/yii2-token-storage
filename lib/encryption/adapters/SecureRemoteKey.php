@@ -31,12 +31,12 @@ abstract class SecureRemoteKey
         if (!static::loadRemoteKeyPair()) {
             return false;
         }
-
-        if ()
         $masterKeyPair = $this->getMasterKeyPair();
         if (!$masterKeyPair) {
             return false;
         }
+        // @todo unlock remote key
+        return true;
     }
 
     private function loadMasterKeys()
