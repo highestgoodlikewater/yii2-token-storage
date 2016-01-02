@@ -13,7 +13,7 @@ trait TestTokensTrait
             ['Qנטשופ צרכנות'],
             ["\x21?+"],
             ["\x21\x3F"],
-            [str_repeat("\0**long**\0", 1000)],
+            [str_repeat("\0**long**\0", 100)],
             [""],
             [null]
         ];

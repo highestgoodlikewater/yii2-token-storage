@@ -4,10 +4,12 @@ namespace canis\tokenStorage\encryption\adapters;
 use Yii;
 
 abstract class SecureRemoteKey
-    extends BaseEncryptionKey
+    extends BaseRemoteKey
 {
     private $masterPublicKey;
     private $masterPrivateKey;
+
+    abstract protected function loadRemoteKeyPair();
 
     private function getMasterKeyPair()
     {
@@ -25,11 +27,16 @@ abstract class SecureRemoteKey
         if ($this->publicKey && $this->privateKey) {
             return true;
         }
-        $keyPair = $this->getMasterKeyPair();
-        if (!$keyPair) {
+
+        if (!static::loadRemoteKeyPair()) {
             return false;
         }
-        
+
+        if ()
+        $masterKeyPair = $this->getMasterKeyPair();
+        if (!$masterKeyPair) {
+            return false;
+        }
     }
 
     private function loadMasterKeys()
