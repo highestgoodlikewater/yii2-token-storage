@@ -2,12 +2,12 @@
 namespace canis\tokenStorage\encryption\adapters;
 
 use Yii;
+use yii\helpers\FileHelper;
 
 abstract class SecureRemoteKey
     extends BaseRemoteKey
 {
-    private $masterPublicKey;
-    private $masterPrivateKey;
+    private $masterKeyPair;
 
     abstract protected function loadRemoteKeyPair();
 
@@ -16,15 +16,12 @@ abstract class SecureRemoteKey
         if (!$this->loadMasterKeys()) {
             return false;
         }
-        return [
-            'private' => $this->masterPrivateKey,
-            'public' => $this->masterPublicKey
-        ];
+        return $this->masterKeyPair;
     }
 
-    protected function loadKeys()
+    protected function loadKeyPair()
     {
-        if ($this->publicKey && $this->privateKey) {
+        if ($this->keyPair !== null) {
             return true;
         }
 
@@ -41,7 +38,7 @@ abstract class SecureRemoteKey
 
     private function loadMasterKeys()
     {
-        if ($this->masterPublicKey && $this->masterPrivateKey) {
+        if ($this->masterKeyPair) {
             return true;
         }
         $config = $this->getConfig();
@@ -50,31 +47,27 @@ abstract class SecureRemoteKey
             throw new InvalidConfigException("The path alias ({$config['localStorage']}) for the master encryption keys is invalid");
         }
         if (!is_dir($keyDirectory)) {
-            @mkdir($keyDirectory, $config['masterKeyDirectoryPermissions'], true);
+            FileHelper::createDirectory($keyDirectory, $config['masterKeyDirectoryPermissions'], true);
         }
         if (!is_dir($keyDirectory)) {
             throw new InvalidConfigException("The directory ({$keyDirectory}) for the master encryption keys could not be protected");
         }
-        @chmod($keyDirectory, $config['masterKeyDirectoryPermissions']);
-        $privateKeyPath = $keyDirectory . DIRECTORY_SEPARATOR . $config['masterKeyName'] . '.private';
-        $publicKeyPath = $keyDirectory . DIRECTORY_SEPARATOR . $config['masterKeyName'] . '.public';
-        if (!is_readable($privateKeyPath) || !is_readable($publicKeyPath)) {
-            $keys = $this->generateKeys();
-            if ($keys && isset($keys['privatekey'])) {
-                $this->masterPrivateKey = $keys['privatekey'];
-                file_put_contents($privateKeyPath, $keys['privatekey']);
-                chmod($privateKeyPath, $config['masterKeyPermissions']);
-            }
-            if ($keys && isset($keys['publickey'])) {
-                $this->masterPublicKey = $keys['publickey'];
-                file_put_contents($publicKeyPath, $keys['publickey']);
-                chmod($publicKeyPath, $config['masterKeyPermissions']);
+        chmod($keyDirectory, $config['masterKeyDirectoryPermissions']);
+        $keyPath = $keyDirectory . DIRECTORY_SEPARATOR . $config['masterKeyName'] . '.key';
+        if (!is_readable($keyPath)) {
+            $keyPair = static::generateKeyPair($config['keySize']);
+            if ($keyPair) {
+                $this->masterKeyPair = $keyPair;
+                file_put_contents($keyPath, serialize($keyPair));
+                if (!file_exists($keyPath)) {
+                    return false;
+                }
+                chmod($keyPath, $config['masterKeyPermissions']);
             }
         } else {
-            $this->masterPrivateKey = file_get_contents($privateKeyPath);
-            $this->masterPublicKey = file_get_contents($publicKeyPath);
+            $this->masterKeyPair = unserialize(file_get_contents($keyPath));
         }
-        if (!empty($this->masterPrivateKey) && !empty($this->masterPublicKey)) {
+        if (!empty($this->keyPair) && $this->keyPair instanceof KeyPairInterface) {
             return true;
         }
         return false;

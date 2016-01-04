@@ -53,7 +53,7 @@ abstract class BaseEncryptionKey
 
     public function isAvailable()
     {
-        return $this->loadKeys() !== false;
+        return $this->loadKeyPair() !== false;
     }
 
     static public function defaultConfig()

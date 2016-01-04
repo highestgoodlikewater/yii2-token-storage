@@ -24,7 +24,7 @@ class LocalKey
         if ($keyDirectory === false) {
             throw new InvalidConfigException("The path alias ({$config['localStorage']}) for the local token encryption keys is invalid");
         }
-        if (!is_dir($keyDirectory)) {
+        if (is_string($keyDirectory) && !is_dir($keyDirectory)) {
             FileHelper::createDirectory($keyDirectory, $config['keyDirectoryPermissions'], true);
         }
         if (!is_dir($keyDirectory)) {
@@ -37,6 +37,9 @@ class LocalKey
             if ($keyPair) {
                 $this->keyPair = $keyPair;
                 file_put_contents($keyPath, serialize($keyPair));
+                if (!file_exists($keyPath)) {
+                    return false;
+                }
                 chmod($keyPath, $config['keyPermissions']);
             }
         } else {
